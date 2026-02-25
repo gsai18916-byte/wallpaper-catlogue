@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moonglue — Wallpaper Catalogue</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,700&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --dark: #0f0c09;
+    --dark-2: #1a1510;
+    --cream: #f5ede0;
+    --text-muted: #9a8a72;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--dark);
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─────────────────────────────────────────
+     INTRO / SPLASH SCREEN
+  ───────────────────────────────────────── */
+  #intro {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #0a0806;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    animation: introFadeOut 0.5s ease 1.5s both;
+    pointer-events: none;
+  }
+
+  @keyframes introFadeOut {
+    0%   { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.04); display: none; }
+  }
+
+  /* Radial glow behind text */
+  .intro-glow {
+    position: absolute;
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.14) 0%, transparent 70%);
+    animation: glowPulse 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes glowPulse {
+    from { transform: scale(0.9); opacity: 0.7; }
+    to   { transform: scale(1.1); opacity: 1; }
+  }
+
+  /* Moon circle */
+  .intro-moon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    position: relative;
+    margin-bottom: 28px;
+    animation: moonReveal 0.4s cubic-bezier(0.16,1,0.3,1) 0.1s both;
+    overflow: hidden;
+  }
+
+  .intro-moon::before {
+    content: '';
+    position: absolute;
+    top: 8px; left: 8px;
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, rgba(201,168,76,0.5), transparent 70%);
+    border: 1px solid rgba(201,168,76,0.3);
+    animation: moonInner 3s ease-in-out infinite alternate;
+  }
+
+  .intro-moon::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 60%, rgba(201,168,76,0.4) 80%, transparent 100%);
+    animation: moonSpin 6s linear infinite;
+  }
+
+  @keyframes moonReveal {
+    from { transform: scale(0.3) rotate(-90deg); opacity: 0; }
+    to   { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  @keyframes moonInner { from { transform: scale(0.85); } to { transform: scale(1.05); } }
+  @keyframes moonSpin  { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* Brand name */
+  .intro-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(54px, 10vw, 100px);
+    font-weight: 300;
+    letter-spacing: -2px;
+    line-height: 1;
+    color: var(--cream);
+    position: relative;
+    overflow: visible;
+    padding-bottom: 8px;
+    animation: brandReveal 0.5s cubic-bezier(0.16,1,0.3,1) 0.25s both;
+  }
+
+  .intro-brand em {
+    font-style: italic;
+    color: var(--gold-light);
+    font-weight: 700;
+  }
+
+  @keyframes brandReveal {
+    from { opacity: 0; transform: translateY(30px) skewY(2deg); }
+    to   { opacity: 1; transform: translateY(0) skewY(0deg); }
+  }
+
+  /* Thin line divider */
+  .intro-line {
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 16px 0;
+    animation: lineExpand 0.4s ease 0.55s both;
+  }
+  @keyframes lineExpand {
+    from { width: 0; opacity: 0; }
+    to   { width: 160px; opacity: 1; }
+  }
+
+  /* By Sai Ganesh */
+  .intro-by {
+    font-size: 11px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 300;
+    animation: byReveal 0.4s ease 0.7s both;
+  }
+  @keyframes byReveal {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Loading dots */
+  .intro-dots {
+    display: flex;
+    gap: 6px;
+    margin-top: 50px;
+    animation: byReveal 0.3s ease 0.9s both;
+  }
+  .intro-dots span {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: dotBlink 1s ease-in-out infinite;
+  }
+  .intro-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .intro-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes dotBlink {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50%       { opacity: 1;   transform: scale(1.2); }
+  }
+
+  /* ─────────────────────────────────────────
+     MAIN CONTENT
+  ───────────────────────────────────────── */
+  #main {
+    opacity: 0;
+    animation: mainReveal 0.6s ease 1.8s both;
+  }
+  @keyframes mainReveal {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  header {
+    text-align: center;
+    padding: 70px 20px 50px;
+    position: relative;
+  }
+
+  header::after {
+    content: '';
+    display: block;
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 28px auto 0;
+  }
+
+  .logo-line {
+    font-size: 11px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    font-weight: 300;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(44px, 8vw, 90px);
+    font-weight: 300;
+    line-height: 0.9;
+    letter-spacing: -1px;
+  }
+
+  h1 span {
+    font-weight: 700;
+    font-style: italic;
+    color: var(--gold-light);
+    display: block;
+  }
+
+  .subtitle {
+    margin-top: 18px;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+    padding: 50px 36px 80px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .card {
+    position: relative;
+    height: 230px;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    border: 1px solid rgba(201,168,76,0.12);
+  }
+
+  .card-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.6s ease, filter 0.4s ease;
+    filter: brightness(0.6) saturate(0.8);
+  }
+
+  .card:hover .card-bg {
+    transform: scale(1.08);
+    filter: brightness(0.38) saturate(0.65);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.2) 0%, transparent 65%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 2;
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.1) 55%, transparent 100%);
+    z-index: 1;
+  }
+
+  .card-content {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 18px 20px;
+    z-index: 3;
+  }
+
+  .card-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.1;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+    transition: color 0.3s;
+  }
+  .card:hover .card-title { color: var(--gold-light); }
+
+  .card-keyword {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-top: 4px;
+  }
+
+  .arrow {
+    position: absolute;
+    top: 14px; right: 14px;
+    z-index: 3;
+    width: 30px; height: 30px;
+    border: 1px solid rgba(201,168,76,0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--gold);
+    opacity: 0;
+    transform: scale(0.7);
+    transition: opacity 0.3s, transform 0.3s;
+    background: rgba(0,0,0,0.35);
+  }
+  .card:hover .arrow { opacity: 1; transform: scale(1); }
+
+  .loading {
+    background-color: #1e1a14 !important;
+    background-image: linear-gradient(90deg, #1e1a14 25%, #2c2418 50%, #1e1a14 75%) !important;
+    background-size: 200% 100% !important;
+    animation: shimmer 1.5s infinite;
+  }
+  @keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Footer / Copyright */
+  footer {
+    text-align: center;
+    padding: 36px 20px 30px;
+    border-top: 1px solid rgba(201,168,76,0.1);
+  }
+
+  .footer-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--gold-light);
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .footer-copy {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .footer-copy span { color: var(--gold); }
+
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+      padding: 24px 12px 60px;
+      gap: 10px;
+    }
+    .card { height: 155px; }
+    .card-title { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── INTRO SPLASH ── -->
+<div id="intro">
+  <div class="intro-glow"></div>
+  <div class="intro-moon"></div>
+  <div class="intro-brand"><em>Moonglue</em></div>
+  <div class="intro-line"></div>
+  <div class="intro-by">by &nbsp; Sai Ganesh</div>
+  <div class="intro-dots">
+    <span></span><span></span><span></span>
+  </div>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<div id="main">
+  <header>
+    <p class="logo-line">Moonglue · Premium Collection</p>
+    <h1>Wallpaper<span>Catalogue</span></h1>
+    <p class="subtitle">Click any category to explore on Shutterstock</p>
+  </header>
+
+  <main>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <footer>
+    <div class="footer-brand">Moonglue</div>
+    <div class="footer-copy">
+      &copy; <span id="year"></span> Moonglue by <span>Sai Ganesh</span>. All rights reserved.
+    </div>
+  </footer>
+</div>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// Hide intro after animation ends
+setTimeout(() => {
+  const intro = document.getElementById('intro');
+  if (intro) intro.style.display = 'none';
+}, 2100);
+
+const categories = [
+  { num:"01", title:"Tropical",            keyword:"tropical wallpapers",            img:"https://images.unsplash.com/photo-1490682143684-14369e18dce8?w=600&q=80" },
+  { num:"02", title:"Botanical",           keyword:"botanical wallpapers",           img:"https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=600&q=80" },
+  { num:"03", title:"Marble Texture",      keyword:"marble texture/gold",            img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" },
+  { num:"04", title:"Pichwai",             keyword:"pichwai",                        img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Pichwai_-_Krishna_with_Gopis_%28detail%29.jpg/640px-Pichwai_-_Krishna_with_Gopis_%28detail%29.jpg" },
+  { num:"05", title:"Floral",              keyword:"floweral wallpapers",            img:"https://images.unsplash.com/photo-1490750967868-88df5691cc29?w=600&q=80" },
+  { num:"06", title:"Buddha",              keyword:"buddha wallpapers",              img:"https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=600&q=80" },
+  { num:"07", title:"Geometrical",         keyword:"geometrical wallpapers",         img:"https://images.unsplash.com/photo-1558591710-4b4a1ae0f7d2?w=600&q=80" },
+  { num:"08", title:"Lord Shiva",          keyword:"lord shiva wallpapers",          img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Shiva_meditating.jpg/480px-Shiva_meditating.jpg" },
+  { num:"09", title:"Lord Krishna",        keyword:"lord krishna wallpapers",        img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Lord_Krishna_with_cow.jpg/480px-Lord_Krishna_with_cow.jpg" },
+  { num:"10", title:"Indian Traditional",  keyword:"indian traditional art wallpapers", img:"https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=600&q=80" },
+  { num:"11", title:"Mughal",              keyword:"mughal wallpapers",              img:"https://images.unsplash.com/photo-1587135941948-670b381f08ce?w=600&q=80" },
+  { num:"12", title:"3D Wallpapers",       keyword:"3d wallpapers",                  img:"https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&q=80" },
+  { num:"13", title:"Kalamkari Art",       keyword:"kalamkari art wallpapers",       img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Kalamkari_Painting.jpg/480px-Kalamkari_Painting.jpg" },
+  { num:"14", title:"Mandala Art",         keyword:"mandala art",                    img:"https://images.unsplash.com/photo-1604076913837-52ab5629fde9?w=600&q=80" },
+  { num:"15", title:"Damask Patterns",     keyword:"damask patterns",                img:"https://images.unsplash.com/photo-1567016432779-094069958ea5?w=600&q=80" },
+  { num:"16", title:"Nature",              keyword:"nature photos wallpapers",       img:"https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&q=80" },
+  { num:"17", title:"Kids Wallpapers",     keyword:"kids wallpapers",                img:"https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=600&q=80" },
+  { num:"18", title:"Kids Space",          keyword:"kids wallpapers space",          img:"https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=600&q=80" },
+  { num:"19", title:"Abstract",            keyword:"abstract wallpapers",            img:"https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=600&q=80" },
+  { num:"20", title:"Feather",             keyword:"hanging feather wallpapers",     img:"https://images.unsplash.com/photo-1611270629569-8b357cb88da9?w=600&q=80" },
+  { num:"21", title:"Madhubani Art",       keyword:"madhubani arts",                 img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Madhubani_painting.jpg/480px-Madhubani_painting.jpg" },
+  { num:"22", title:"Jesus",               keyword:"jesus wallpapers",               img:"https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600&q=80" },
+  { num:"23", title:"Self Design Patterns",keyword:"self design patterns",           img:"https://images.unsplash.com/photo-1586348943529-beaae6c28db9?w=600&q=80" },
+  { num:"24", title:"Warli Art",           keyword:"warli art",                      img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Warli_Paintings_in_Sanjay_Gandhi_National_Park.jpg/480px-Warli_Paintings_in_Sanjay_Gandhi_National_Park.jpg" },
+  { num:"25", title:"Animal Wallpapers",   keyword:"animals wallpapers",             img:"https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=600&q=80" },
+  { num:"26", title:"Jungle",              keyword:"jungle wallpapers",              img:"https://images.unsplash.com/photo-1511497584788-876760111969?w=600&q=80" },
+  { num:"27", title:"Jharokha Art",        keyword:"jharokha art wallpapers",        img:"https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80" },
+  { num:"28", title:"Boho Art",            keyword:"boho art",                       img:"https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&q=80" },
+  { num:"29", title:"Kolam Art",           keyword:"kolam art",                      img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Kolam_in_Tamil_Nadu.jpg/480px-Kolam_in_Tamil_Nadu.jpg" },
+  { num:"30", title:"Ceiling Wallpapers",  keyword:"ceiling wallpapers",             img:"https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80" },
+  { num:"31", title:"Mary / Matha",        keyword:"mery matha wallpapers",          img:"https://images.unsplash.com/photo-1548625149-720f6e1b4376?w=600&q=80" },
+];
+
+const fallbacks = [
+  "#1a4a2a,#2d7a4f","#1a3a1a,#4a7a3a","#2a2a2a,#8a7a6a",
+  "#4a2a1a,#8a5a3a","#4a1a2a,#8a3a5a","#1a2a4a,#3a5a8a",
+];
+
+const grid = document.getElementById('grid');
+
+categories.forEach((cat, i) => {
+  const url = `https://www.shutterstock.com/search/${encodeURIComponent(cat.keyword)}`;
+  const a = document.createElement('a');
+  a.className = 'card';
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+
+  const bg = document.createElement('div');
+  bg.className = 'card-bg loading';
+
+  const img = new Image();
+  img.onload = () => {
+    bg.style.backgroundImage = `url('${cat.img}')`;
+    bg.classList.remove('loading');
+  };
+  img.onerror = () => {
+    const fb = fallbacks[i % fallbacks.length].split(',');
+    bg.style.backgroundImage = `linear-gradient(135deg, ${fb[0]}, ${fb[1]})`;
+    bg.classList.remove('loading');
+  };
+  img.src = cat.img;
+
+  a.appendChild(bg);
+  a.innerHTML += `
+    <div class="card-gradient"></div>
+    <div class="card-content">
+      <div class="card-num">— ${cat.num}</div>
+      <div class="card-title">${cat.title}</div>
+      <div class="card-keyword">${cat.keyword}</div>
+    </div>
+    <div class="arrow">↗</div>
+  `;
+  a.insertBefore(bg, a.firstChild);
+  grid.appendChild(a);
+});
+</script>
+</body>
+</html>
